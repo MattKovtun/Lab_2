@@ -1,7 +1,15 @@
 class LSH:
+    def __init__(self, file_list, data_list):
+        self.file_list = file_list
+        self.data_list = data_list
 
-
-
+    def rough_jaccard_test(self):
+        resulting_table = [[-1 for i in range(len(self.file_list))] for j in range(len(self.file_list))]
+        for i, file_word_set_a in enumerate(self.data_list):
+            for j, file_word_set_b in enumerate(self.data_list):
+                if i == j: continue
+                resulting_table[i][j] = LSH.jaccard(file_word_set_a, file_word_set_b)
+        return resulting_table
 
     @staticmethod
     def jaccard(set_a, set_b):
