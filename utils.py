@@ -2,9 +2,15 @@ import codecs
 
 
 def read_files(file_list):
+    """
+    In order to achieve better results add additional processing of each file
+    such as removing quotes and special characters
+    :param file_list:
+    :return:
+    """
     data_list = []
     for file in file_list:
-        with codecs.open(file, encoding='latin-1') as input_file_a:
+        with codecs.open(file, encoding='utf8', errors='ignore') as input_file_a:  # 'latin-1'
             word_set = set()
             for line in input_file_a:
                 line = line.strip().split()
