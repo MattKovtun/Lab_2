@@ -12,7 +12,10 @@ def main():
     # plagiarism_table = lsh.rough_jaccard_test()
     # task_format_print(files, plagiarism_table)
 
-    plagiarism_table_min_hash = lsh.min_hashing()
+    # plagiarism_table_min_hash = lsh.min_hashing()
+    # task_format_print(files, plagiarism_table_min_hash)
+
+    plagiarism_table_min_hash = lsh.min_hashing(shingles_mode=True)
     task_format_print(files, plagiarism_table_min_hash)
 
 

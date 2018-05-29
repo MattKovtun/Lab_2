@@ -2,8 +2,7 @@ from random import shuffle
 
 
 class LSH:
-    # TODO: add shingling
-    def __init__(self, data_list, desired_fingerprint_length=100):
+    def __init__(self, data_list, desired_fingerprint_length=100, shingles_length=3):
         """
         Constructor
         :param data_list: 2d matrix (array of sets) n by m, where n - number of examples (documents)
@@ -12,11 +11,12 @@ class LSH:
         """
         self.data_list = data_list
         self.desired_fingerprint_length = desired_fingerprint_length
+        self.shingles_length = shingles_length
 
     def rough_jaccard_test(self):
         return self._generate_plagiarism_table(self.data_list)
 
-    def min_hashing(self):
+    def min_hashing(self, shingles_mode=False):
         all_words_dictionary = set()
         for word_set in self.data_list:
             all_words_dictionary = set.union(all_words_dictionary, word_set)
@@ -28,8 +28,18 @@ class LSH:
             shuffle(permutation)
             min_hash_fingerprints.append(self._formhashes(permutation))
 
-        # print(list(map(list, zip(*min_hash_fingerprints))))
-        return self._generate_plagiarism_table(list(map(list, zip(*min_hash_fingerprints))))
+        min_hash_fingerprints_T = list(map(list, zip(*min_hash_fingerprints)))
+
+        if not shingles_mode:
+            return self._generate_plagiarism_table(min_hash_fingerprints_T)
+
+        shingle_fingerprints = [[] for i in min_hash_fingerprints_T]
+        for i, fingerprint in enumerate(min_hash_fingerprints_T):
+            for j in range(0, len(fingerprint), 3):
+                shingle = [str(min_hash) for min_hash in fingerprint[j:min(j + 3, len(fingerprint))]]
+                shingle_fingerprints[i].append("".join(shingle))
+
+        return self._generate_plagiarism_table(shingle_fingerprints)
 
     def _formhashes(self, word_permutation):
         """
@@ -59,6 +69,13 @@ class LSH:
 
     @staticmethod
     def jaccard(set_a, set_b):
+        """
+        Function which accepts two sets or two lists and calculates jaccard
+        distance between them
+        :param set_a:  list or set
+        :param set_b:  list or set
+        :return:
+        """
         assert ((type(set_a) == type(list()) == type(set_b)) or (type(set_a) == type(set_b) == type(set())))
 
         common_items = 0
